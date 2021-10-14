@@ -1,8 +1,10 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const session = require("express-session");
 const jwt = require("jsonwebtoken");
+const session = require("express-session");
+const passport = require("passport");
+const passportLocalMongoose = require("passport-local-mongoose");
 
 // const passport = require("passport");
 // const passportLocalMongoose = require("passport-local-mongoose");
@@ -26,8 +28,8 @@ app.use(
   })
 );
 
-// app.use(passport.initialize());
-// app.use(passport.session());
+app.use(passport.initialize());
+app.use(passport.session());
 
 //// Database connection
 mongoose.connect(
@@ -67,21 +69,9 @@ const journalSchema = new mongoose.Schema({
 });
 
 const userSchema = new mongoose.Schema({
-  _id: {
+  username: {
     type: String,
-    required: [true, "ID is required"],
-  },
-  firstName: {
-    type: String,
-    required: [true, "First name is required"],
-  },
-  lastName: {
-    type: String,
-    required: [true, "Last name is required"],
-  },
-  email: {
-    type: String,
-    required: [true, "Email address is required"],
+    required: [true, "Username is required"],
   },
   password: {
     type: String,
@@ -89,13 +79,15 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// userSchema.plugin(passportLocalMongoose);
+userSchema.plugin(passportLocalMongoose);
 
 const Journal = mongoose.model("Journal", journalSchema);
 const User = mongoose.model("User", userSchema);
 
-// passport.serializeUser(User.serializeUser());
-// passport.deserializeUser(User.deserializeUser());
+passport.use(User.createStrategy());
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 //// Cors settings
 app.use((req, res, next) => {
@@ -107,8 +99,6 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
-
-//// Handle requests
 
 //// Creating a new journal
 app.post("/createJournal", function (req, res, next) {
@@ -144,23 +134,56 @@ app.post("/journalGet", function (req, res, next) {
 });
 //// Creating a new User
 app.post("/createUser", function (req, res, next) {
-  // console.log(req.body);
-  const newUser = new User({
-    _id: req.body.userEmailField,
-    firstName: req.body.userFirstNameField,
-    lastName: req.body.userLastNameField,
-    email: req.body.userEmailField,
-    password: req.body.userPasswordField,
-  });
-  newUser.save((err) => {
-    if (!err) {
-      res.header("set-cookie", "register=true");
-      res.send("API is working properly");
-    } else {
-      res.send("Problems Problems Problems");
-      console.log(err);
+  //Trying out passport
+  console.log(req.body);
+  var string = req.body.userPasswordField.toString();
+  User.register(
+    {
+      username: req.body.userEmailField,
+    },
+    string,
+    function (err, user) {
+      console.log("----------------------------------------");
+      console.log(req.body.userPasswordField);
+      console.log("----------------------------------------");
+      if (err) {
+        res.send("Problems Problems Problems");
+        console.log(err);
+      } else {
+        passport.authenticate("local")(req, res, function () {
+          res.header("set-cookie", "register=true");
+          res.send("API is working properly");
+        });
+      }
     }
-  });
+  );
+
+  // console.log(req.body);
+  // const newUser = new User({
+  //   _id: req.body.userEmailField,
+  //   firstName: req.body.userFirstNameField,
+  //   lastName: req.body.userLastNameField,
+  //   email: req.body.userEmailField,
+  //   password: req.body.userPasswordField,
+  // });
+  // newUser.save((err) => {
+  //   if (!err) {
+  //     res.header("set-cookie", "register=true");
+  //     res.send("API is working properly");
+  //   } else {
+  //     res.send("Problems Problems Problems");
+  //     console.log(err);
+  //   }
+  // });
+});
+
+app.get("/secrets", function (req, res) {
+  if (req.isAuthenticated()) {
+    res.header("set-cookie", "register=true");
+    res.send("API is working properly");
+  } else {
+    res.send("Problems Problems Problems");
+  }
 });
 
 //Logging user in
@@ -171,12 +194,14 @@ app.post("/loginUser", function (req, res, next) {
     } else {
       if (users.password === req.body.userPasswordField) {
         //Generating token
-        const token = jwt.sign(
-          { email: req.body.userEmailField },
-          "SuperSecretKeySuperSecretKey",
-          { expiresIn: "1h" }
-        );
-        res.send({ users: users, token: token });
+        // const token = jwt.sign(
+        //   { email: req.body.userEmailField },
+        //   "SuperSecretKeySuperSecretKey",
+        //   { expiresIn: "1h" }
+        // );
+        // res.send({ users: users, token: token });
+        //Trying out passport
+        // User.register()
       } else {
         res.send("None");
       }
