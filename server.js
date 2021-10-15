@@ -71,11 +71,9 @@ const journalSchema = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: [true, "Username is required"],
   },
   password: {
     type: String,
-    required: [true, "Password is required"],
   },
 });
 
@@ -132,49 +130,27 @@ app.post("/journalGet", function (req, res, next) {
     }
   });
 });
-//// Creating a new User
+
+// Creating a new User
 app.post("/createUser", function (req, res, next) {
-  //Trying out passport
-  console.log(req.body);
-  var string = req.body.userPasswordField.toString();
+  // Using passport to register users on the database
   User.register(
-    {
-      username: req.body.userEmailField,
-    },
-    string,
+    new User({ username: req.body.username }),
+    req.body.password,
     function (err, user) {
-      console.log("----------------------------------------");
-      console.log(req.body.userPasswordField);
-      console.log("----------------------------------------");
       if (err) {
         res.send("Problems Problems Problems");
         console.log(err);
-      } else {
-        passport.authenticate("local")(req, res, function () {
-          res.header("set-cookie", "register=true");
-          res.send("API is working properly");
-        });
+        console.log("----------------------------------------");
       }
+      passport.authenticate("local")(req, res, function () {
+        console.log(" authenticate ");
+        console.log("----------------------------------------");
+        res.header("set-cookie", "register=true");
+        res.send("API is working properly");
+      });
     }
   );
-
-  // console.log(req.body);
-  // const newUser = new User({
-  //   _id: req.body.userEmailField,
-  //   firstName: req.body.userFirstNameField,
-  //   lastName: req.body.userLastNameField,
-  //   email: req.body.userEmailField,
-  //   password: req.body.userPasswordField,
-  // });
-  // newUser.save((err) => {
-  //   if (!err) {
-  //     res.header("set-cookie", "register=true");
-  //     res.send("API is working properly");
-  //   } else {
-  //     res.send("Problems Problems Problems");
-  //     console.log(err);
-  //   }
-  // });
 });
 
 app.get("/secrets", function (req, res) {
