@@ -135,7 +135,8 @@ app.post("/createJournal", function (req, res, next) {
 
   newJournal.save((err) => {
     if (!err) {
-      res.send("API is working properly");
+      res.statusCode = 200;
+      res.send({ journalCreate: "Success" });
     } else {
       res.send("Problems Problems Problems");
       console.log(err);
