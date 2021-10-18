@@ -54,17 +54,33 @@ const journalSchema = new mongoose.Schema({
     type: String,
     required: [true, "waterType is required"],
   },
+  vegWatt: {
+    type: String,
+    required: [true, "veg Wattage is required"],
+  },
   vegLight: {
     type: String,
     required: [true, "vegLight is required"],
+  },
+  flowerWatt: {
+    type: String,
+    required: [true, "Flower Wattage is required"],
   },
   flowLight: {
     type: String,
     required: [true, "flowLight is required"],
   },
   growMedium: {
-    type: String,
+    type: Array,
     required: [true, "Grow Medium is required"],
+  },
+  activeJournal: {
+    type: Boolean,
+    required: [true, "Journal Active is required"],
+  },
+  journalUsername: {
+    type: String,
+    required: [true, "Journal Username is required"],
   },
 });
 
@@ -108,8 +124,14 @@ app.post("/createJournal", function (req, res, next) {
     waterType: req.body.journalWaterType,
     vegLight: req.body.journalVegLight,
     flowLight: req.body.journalFlowLight,
+    vegWatt: req.body.journalVegWatt,
+    flowerWatt: req.body.journalFlowerWatt,
     growMedium: req.body.journalGrowMedium,
+    activeJournal: true,
+    journalUsername: req.body.journalUsername,
   });
+
+  console.log(newJournal);
 
   newJournal.save((err) => {
     if (!err) {
