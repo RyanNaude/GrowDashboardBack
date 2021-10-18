@@ -144,7 +144,7 @@ app.post("/createUser", function (req, res, next) {
         console.log("----------------------------------------");
       }
       passport.authenticate("local")(req, res, function () {
-        console.log(" authenticate ");
+        console.log(" authenticate Sign Up");
         console.log("----------------------------------------");
         res.header("set-cookie", "register=true");
         res.send("API is working properly");
@@ -164,25 +164,45 @@ app.get("/secrets", function (req, res) {
 
 //Logging user in
 app.post("/loginUser", function (req, res, next) {
-  User.findById(req.body.userEmailField, function (err, users) {
+  const user = new User({
+    username: req.body.username,
+    password: req.body.password,
+  });
+
+  req.login(user, function (err) {
     if (err) {
       console.log(err);
     } else {
-      if (users.password === req.body.userPasswordField) {
+      passport.authenticate("local")(req, res, function () {
         //Generating token
-        // const token = jwt.sign(
-        //   { email: req.body.userEmailField },
-        //   "SuperSecretKeySuperSecretKey",
-        //   { expiresIn: "1h" }
-        // );
-        // res.send({ users: users, token: token });
-        //Trying out passport
-        // User.register()
-      } else {
-        res.send("None");
-      }
+        const token = jwt.sign(
+          { email: req.body.username },
+          "SuperSecretKeySuperSecretKey",
+          { expiresIn: "1h" }
+        );
+        console.log(" authenticate Sign In");
+        console.log("----------------------------------------");
+        res.status(200).json({ token: token, userId: user.username });
+        // res.send({ token: token, userId: user.username });
+      });
     }
   });
+});
+
+// res.send({ token: token });
+// save user token
+// user.token = token;
+
+// return new user
+// console.log(user);
+
+// res.header("set-cookie", "register=true");
+// res.send("API is working properly");
+
+app.get("/logout", function (req, res) {
+  req.logOut();
+  console.log(" authenticate Sign Out");
+  console.log("----------------------------------------");
 });
 
 app.get("/", function (req, res, next) {
