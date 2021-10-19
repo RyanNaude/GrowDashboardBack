@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const https = require("https");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const session = require("express-session");
@@ -189,6 +190,17 @@ app.get("/secrets", function (req, res) {
   } else {
     res.send("Problems Problems Problems");
   }
+});
+
+app.get("/currentWeather", function (req, res) {
+  console.log("currentWeather API Call");
+  https.get(
+    "https://api.openweathermap.org/data/2.5/weather?q=Kempton Park&units=metrics&appid=59494d284a31e455c9fa256b047805c2",
+    (resp) => {
+      let data = "";
+      console.log(resp);
+    }
+  );
 });
 
 //Logging user in
