@@ -6,9 +6,7 @@ const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 
-const configData = require("./config/enviroment/development.json");
-
-console.log(configData.session.secret);
+const configData = require("./config/environment/development.json");
 
 // const passport = require("passport");
 // const passportLocalMongoose = require("passport-local-mongoose");
