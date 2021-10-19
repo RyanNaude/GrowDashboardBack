@@ -6,6 +6,10 @@ const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 
+const configData = require("./config/enviroment/development.json");
+
+console.log(configData.session.secret);
+
 // const passport = require("passport");
 // const passportLocalMongoose = require("passport-local-mongoose");
 
@@ -22,9 +26,9 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   session({
-    secret: "Our little secret sentence.",
-    resave: false,
-    saveUninitialized: false,
+    secret: configData.session.secret,
+    resave: configData.session.resave,
+    saveUninitialized: configData.session.saveUninitialized,
   })
 );
 
@@ -32,10 +36,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //// Database connection
-mongoose.connect(
-  "mongodb+srv://Ryan_Naude:ArwypTest@cluster0.v3lqg.mongodb.net/grow?retryWrites=true&w=majority",
-  { useUnifiedTopology: true, useNewUrlParser: true }
-);
+mongoose.connect(configData.mongoose.connectionString, {
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+});
 
 const journalSchema = new mongoose.Schema({
   name: {
@@ -105,6 +109,7 @@ passport.deserializeUser(User.deserializeUser());
 
 //// Cors settings
 app.use((req, res, next) => {
+  //Replace "http://localhost:3000" with '*' wildcard to allow access from all locations
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   res.setHeader(
     "Access-Control-Allow-Methods",
@@ -131,14 +136,17 @@ app.post("/createJournal", function (req, res, next) {
     journalUsername: req.body.journalUsername,
   });
 
+  console.log("New Journal");
   console.log(newJournal);
 
   newJournal.save((err) => {
     if (!err) {
-      res.statusCode = 200;
-      res.send({ journalCreate: "Success" });
+      res.status(201).json({ message: "Success" });
+      // res.statusCode = 200;
+      // res.send({ journalCreate: "Success" });
     } else {
-      res.send("Problems Problems Problems");
+      res.status(401).json({ journalCreate: "Failure" });
+      // res.send("Problems Problems Problems");
       console.log(err);
     }
   });

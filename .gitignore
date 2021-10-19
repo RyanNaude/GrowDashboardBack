@@ -1,0 +1,6 @@
+# NODE
+node_modules
+
+# ENVIRONMENT
+development.json
+#production.json
