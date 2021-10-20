@@ -194,13 +194,18 @@ app.get("/secrets", function (req, res) {
 });
 
 app.get("/currentWeather", function (req, res) {
-  console.log("currentWeather API Call");
-  var apiCall =
+  const apiCallURL =
     "https://api.openweathermap.org/data/2.5/weather?q=Kempton Park&units=metrics&appid=" +
     weatherAPIKey;
-  https.get(apiCall, (resp) => {
-    let data = "";
-    console.log(resp);
+  console.log("currentWeather API Call");
+  console.log(apiCallURL);
+  https.get(apiCallURL, (response) => {
+    // let data = "";
+    console.log(response.statusCode);
+    response.on("data", (data) => {
+      const weatherData = JSON.parse(data);
+      res.send(JSON.stringify(weatherData));
+    });
   });
 });
 
