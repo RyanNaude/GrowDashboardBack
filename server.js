@@ -195,7 +195,7 @@ app.get("/secrets", function (req, res) {
 
 app.get("/currentWeather", function (req, res) {
   const apiCallURL =
-    "https://api.openweathermap.org/data/2.5/weather?q=Kempton Park&units=metrics&appid=" +
+    "https://api.openweathermap.org/data/2.5/weather?q=Kempton Park&units=metric&appid=" +
     weatherAPIKey;
   console.log("currentWeather API Call");
   console.log(apiCallURL);
