@@ -121,7 +121,7 @@ app.use((req, res, next) => {
 
 //// Creating a new journal
 app.post("/createJournal", function (req, res, next) {
-  console.log(req.body);
+  // console.log(req.body);
   const newJournal = new Journal({
     name: req.body.journalNameField,
     description: req.body.journalDescField,
@@ -136,8 +136,8 @@ app.post("/createJournal", function (req, res, next) {
     journalUsername: req.body.journalUsername,
   });
 
-  console.log("New Journal");
-  console.log(newJournal);
+  // console.log("New Journal");
+  // console.log(newJournal);
 
   newJournal.save((err) => {
     if (!err) {
@@ -175,8 +175,8 @@ app.post("/createUser", function (req, res, next) {
         console.log("----------------------------------------");
       }
       passport.authenticate("local")(req, res, function () {
-        console.log(" authenticate Sign Up");
-        console.log("----------------------------------------");
+        // console.log(" authenticate Sign Up");
+        // console.log("----------------------------------------");
         res.header("set-cookie", "register=true");
         res.send("API is working properly");
       });
@@ -193,15 +193,15 @@ app.get("/secrets", function (req, res) {
   }
 });
 
-app.get("/currentWeather", function (req, res) {
-  const apiCallURL =
-    "https://api.openweathermap.org/data/2.5/weather?q=Kempton Park&units=metric&appid=" +
-    weatherAPIKey;
+app.post("/currentWeather", function (req, res) {
+  console.log("-----------------------");
+  console.log(req.body.weatherAPI + weatherAPIKey);
+  const apiCallURL = req.body.weatherAPI + weatherAPIKey;
   console.log("currentWeather API Call");
   console.log(apiCallURL);
+  console.log("-----------------------");
   https.get(apiCallURL, (response) => {
     // let data = "";
-    console.log(response.statusCode);
     response.on("data", (data) => {
       const weatherData = JSON.parse(data);
       res.send(JSON.stringify(weatherData));
@@ -227,8 +227,8 @@ app.post("/loginUser", function (req, res, next) {
           "SuperSecretKeySuperSecretKey",
           { expiresIn: "1h" }
         );
-        console.log(" authenticate Sign In");
-        console.log("----------------------------------------");
+        // console.log(" authenticate Sign In");
+        // console.log("----------------------------------------");
         res.status(200).json({ token: token, userId: user.username });
         // res.send({ token: token, userId: user.username });
       });
@@ -248,8 +248,8 @@ app.post("/loginUser", function (req, res, next) {
 
 app.get("/logout", function (req, res) {
   req.logOut();
-  console.log(" authenticate Sign Out");
-  console.log("----------------------------------------");
+  // console.log(" authenticate Sign Out");
+  // console.log("----------------------------------------");
 });
 
 app.get("/", function (req, res, next) {
