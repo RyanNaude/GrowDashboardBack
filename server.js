@@ -14,24 +14,24 @@ const passportLocalMongoose = require("passport-local-mongoose");
 // Import App Routes
 const routes = require("./routes/routes");
 
+//Import Models
+const userModel = require("./models/user");
+
 const PORT = 4000;
 
 //// Server Configuration
 const app = express();
 app.use(bodyParser.json());
 
-app.use(passport.initialize());
-app.use(passport.session());
-
-const journalModel = require("./models/journal");
-const userModel = require("./models/user");
+// const journalModel = require("./models/journal");
+// const userModel = require("./models/user");
 
 // userModel.Users.plugin(passportLocalMongoose);
 
 // const Journal = mongoose.model("Journal", journalModel.Journal);
 // const User = mongoose.model("User", userModel.Users);
 
-// passport.use(User.createStrategy());
+// passport.use(userModel.createStrategy());
 
 // passport.serializeUser(userModel.serializeUser());
 // passport.deserializeUser(userModel.deserializeUser());
@@ -50,12 +50,11 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 //Import Routes
 app.use(routes);
-
-// app.use("/loginUser", function (req, res ) {
-//   console.log("API is working properly");
-// });
 
 //// Database connection
 mongoose.connect(configData.mongoose.connectionString).then((result) => {

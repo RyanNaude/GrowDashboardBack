@@ -1,25 +1,46 @@
 const User = require("../models/user");
 const passport = require("passport");
 
-console.log(User);
-
 exports.createUser = async (req, res, next) => {
   // Using passport to register users on the database
-  User.register(
-    new User({ username: req.body.username }),
-    req.body.password,
-    function (err, user) {
-      if (err) {
-        res.send("Problems Problems Problems");
-        console.log(err);
-        console.log("----------------------------------------");
+  console.log("Create new user");
+
+  const username = req.body.username;
+  const password = req.body.password;
+
+  User.findOne({ username: username })
+    .then((userDoc) => {
+      if (userDoc) {
+        res.send("User already exists");
       }
-      passport.authenticate("local")(req, res, function () {
-        res.header("set-cookie", "register=true");
-        res.send("API is working properly");
+
+      const user = new User({
+        username: username,
+        password: password,
       });
-    }
-  );
+      return user.save();
+    })
+    .then((result) => {
+      res.header("set-cookie", "register=true");
+      res.send("User added successfully");
+    })
+    .catch((err) => console.log(err));
+
+  // User.register(
+  //   new User({ username: req.body.username }),
+  //   req.body.password,
+  //   function (err, user) {
+  //     if (err) {
+  //       res.send("Problems Problems Problems");
+  //       console.log(err);
+  //       console.log("----------------------------------------");
+  //     }
+  //     passport.authenticate("local")(req, res, function () {
+  //       res.header("set-cookie", "register=true");
+  //       res.send("API is working properly");
+  //     });
+  //   }
+  // );
 };
 
 exports.loginUser = async (req, res, next) => {
@@ -31,6 +52,10 @@ exports.loginUser = async (req, res, next) => {
     password: req.body.password,
   });
 
+  // passport.use(User.createStrategy());
+
+  passport.serializeUser(User.serializeUser());
+  passport.deserializeUser(User.deserializeUser());
   // passport.serializeUser(User.serializeUser());
   // passport.deserializeUser(User.deserializeUser());
 
