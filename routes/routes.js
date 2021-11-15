@@ -11,11 +11,11 @@ router.post("/createJournal", journalController.createJournal); // Creating a ne
 router.post("/journalGet", journalController.getJournals); // Getting data of all journals
 
 //User Routes
-router.post("/createUser", userController.createUser); // Creating a new User
-router.post("/loginUser", userController.loginUser); //Logging user in
-router.get("/logout", userController.logout);
+// router.post("/createUser", userController.createUser); // Creating a new User
+// router.post("/loginUser", userController.loginUser); //Logging user in
+// router.get("/logout", userController.logout);
 
 //Weather Routes
-router.post("/currentWeather", weatherController.getWeather);
+// router.post("/currentWeather", weatherController.getWeather);
 
 module.exports = router;

@@ -13,6 +13,9 @@ const passportLocalMongoose = require("passport-local-mongoose");
 
 // Import App Routes
 const routes = require("./routes/routes");
+const userRoutes = require("./routes/user-routes");
+const weatherRoutes = require("./routes/weather-routes");
+const journalRoutes = require("./routes/journal-routes");
 
 //Import Models
 const userModel = require("./models/user");
@@ -54,7 +57,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //Import Routes
-app.use(routes);
+// app.use(routes);
+app.use("/user",userRoutes);
+app.use("/weather",weatherRoutes);
+app.use("/journal",journalRoutes);
 
 //// Database connection
 mongoose.connect(configData.mongoose.connectionString).then((result) => {
