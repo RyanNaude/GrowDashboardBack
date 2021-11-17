@@ -11,9 +11,10 @@ exports.createUser = async (req, res, next) => {
   User.findOne({ username: username })
     .then((userDoc) => {
       if (userDoc) {
-        res.send("User already exists");
+        res.header("Set-Cookie", "loggedIn=false");
+        res.send({ logginIn: "false" });
+        return;
       }
-
       const user = new User({
         username: username,
         password: password,
@@ -21,8 +22,9 @@ exports.createUser = async (req, res, next) => {
       return user.save();
     })
     .then((result) => {
-      res.header("set-cookie", "register=true");
-      res.send("User added successfully");
+      res.isLoggedIn = true;
+      // res.header("Set-Cookie", "true");
+      res.send({ "logginIn": "true" });
     })
     .catch((err) => console.log(err));
 
@@ -45,7 +47,7 @@ exports.createUser = async (req, res, next) => {
 
 exports.loginUser = async (req, res, next) => {
   console.log("This is a login user test");
-  console.log(req.body);
+  console.log(req.headers.cookie);
 
   const user = new User({
     username: req.body.username,
