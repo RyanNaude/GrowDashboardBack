@@ -1,84 +1,64 @@
 const User = require("../models/user");
-const passport = require("passport");
+const tokenUtil = require("../util/jwtToken");
 
+//User Sign Up Controller
 exports.createUser = async (req, res, next) => {
-  // Using passport to register users on the database
-  console.log("Create new user");
-
+  var token;
   const username = req.body.username;
   const password = req.body.password;
 
+  //Verifying if user already signed up
   User.findOne({ username: username })
     .then((userDoc) => {
       if (userDoc) {
-        res.header("Set-Cookie", "loggedIn=false");
-        res.send({ logginIn: "false" });
+        res.status(409).json({ registerStatus: "Failure" });
         return;
       }
       const user = new User({
         username: username,
         password: password,
       });
-      return user.save();
-    })
-    .then((result) => {
-      res.isLoggedIn = true;
-      // res.header("Set-Cookie", "true");
-      res.send({ "logginIn": "true" });
+
+      //Adding user to mondo table
+      return user.save((err, user) => {
+        if (err) throw err;
+        token = tokenUtil.genToken(user);
+        //Send token to frontend
+        res.status(200).json({ registerStatus: "Success", logToken: token });
+        // res.send({ logToken: token });
+      });
     })
     .catch((err) => console.log(err));
-
-  // User.register(
-  //   new User({ username: req.body.username }),
-  //   req.body.password,
-  //   function (err, user) {
-  //     if (err) {
-  //       res.send("Problems Problems Problems");
-  //       console.log(err);
-  //       console.log("----------------------------------------");
-  //     }
-  //     passport.authenticate("local")(req, res, function () {
-  //       res.header("set-cookie", "register=true");
-  //       res.send("API is working properly");
-  //     });
-  //   }
-  // );
 };
 
+//User Sign In Controller
 exports.loginUser = async (req, res, next) => {
-  console.log("This is a login user test");
-  console.log(req.headers.cookie);
-
   const user = new User({
     username: req.body.username,
     password: req.body.password,
   });
 
-  // passport.use(User.createStrategy());
-
-  // passport.serializeUser(User.serializeUser());
-  // passport.deserializeUser(User.deserializeUser());
-  // passport.serializeUser(User.serializeUser());
-  // passport.deserializeUser(User.deserializeUser());
-
-  req.login(user, function (err) {
-    if (err) {
-      console.log("This is an Error");
-      console.log(err);
-    } else {
-      passport.authenticate("local")(req, res, function () {
-        //Generating token
-        const token = jwt.sign(
-          { email: req.body.username },
-          "SuperSecretKeySuperSecretKey",
-          { expiresIn: "1h" }
-        );
-        res.status(200).json({ token: token, userId: user.username });
-      });
-    }
-  });
+  //Verifying user details from database
+  User.findOne({ username: user.username })
+    .then((userDoc) => {
+      if (userDoc === null || userDoc === undefined) {
+        //User email not found
+        res.status(401).json({ loginStatus: "User Unknown" });
+      } else {
+        if (userDoc.password === user.password) {
+          //All user details correct
+          token = tokenUtil.genToken(user);
+          res.status(200).json({ loginStatus: "Success", logToken: token });
+        } else {
+          //User email exists, password entered incorrect
+          res.status(401).json({ loginStatus: "User Unknown" });
+        }
+      }
+    })
+    .catch((err) => console.log(err));
 };
 
+//User sign out controller
 exports.logout = async (req, res) => {
   req.logOut();
 };

@@ -4,6 +4,7 @@ exports.getJournals = async (req, res, next) => {
   Journal.find(function (err, journals) {
     if (err) {
       console.log(err);
+      res.status(401).json({ journal: "none" });
     } else {
       res.send(journals);
     }
@@ -27,13 +28,9 @@ exports.createJournal = async (req, res, next) => {
 
   newJournal.save((err) => {
     if (!err) {
-      res.status(201).json({ message: "Success" });
-      // res.statusCode = 200;
-      // res.send({ journalCreate: "Success" });
+      res.status(201).json({ journalCreate: "Success" });
     } else {
       res.status(401).json({ journalCreate: "Failure" });
-      // res.send("Problems Problems Problems");
-      console.log(err);
     }
   });
 };
