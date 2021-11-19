@@ -1,3 +1,5 @@
+//User Controller
+
 const User = require("../models/user");
 const tokenUtil = require("../util/jwtToken");
 
@@ -25,7 +27,6 @@ exports.createUser = async (req, res, next) => {
         token = tokenUtil.genToken(user);
         //Send token to frontend
         res.status(200).json({ registerStatus: "Success", logToken: token });
-        // res.send({ logToken: token });
       });
     })
     .catch((err) => console.log(err));

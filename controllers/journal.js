@@ -1,3 +1,5 @@
+//Journal Controller
+
 const Journal = require("../models/journal");
 
 exports.getJournals = async (req, res, next) => {
