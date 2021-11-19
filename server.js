@@ -10,7 +10,7 @@ const weatherAPIKey = configData.weatherAPI;
 const https = require("https");
 
 // Import App Routes
-const routes = require("./routes/routes");
+// const routes = require("./routes/routes");
 const userRoutes = require("./routes/user-routes");
 const weatherRoutes = require("./routes/weather-routes");
 const journalRoutes = require("./routes/journal-routes");
