@@ -49,7 +49,13 @@ exports.loginUser = async (req, res, next) => {
         if (userDoc.password === user.password) {
           //All user details correct
           token = tokenUtil.genToken(user);
-          res.status(200).json({ loginStatus: "Success", logToken: token });
+          res
+            .status(200)
+            .json({
+              loginStatus: "Success",
+              logToken: token,
+              userId: user.username,
+            });
         } else {
           //User email exists, password entered incorrect
           res.status(401).json({ loginStatus: "User Unknown" });
