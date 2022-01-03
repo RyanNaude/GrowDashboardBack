@@ -14,6 +14,7 @@ const https = require("https");
 const userRoutes = require("./routes/user-routes");
 const weatherRoutes = require("./routes/weather-routes");
 const journalRoutes = require("./routes/journal-routes");
+const costmanagementRoutes = require("./routes/costManagement-routes");
 
 //Import Models
 const userModel = require("./models/user");
@@ -30,9 +31,7 @@ app.use(
 
 // Cors settings
 app.use((req, res, next) => {
-  console.log(req.body);
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-  // res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, PATCH, DELETE, OPTIONS"
@@ -43,11 +42,14 @@ app.use((req, res, next) => {
   );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   res.setHeader("Access-Control-Allow-Credentials", true);
-  // console.log(res);
   next();
 });
 
 //Import Routes
+app.use("/costmanagement", costmanagementRoutes);
+// app.use("/costmanagement", () => {
+//   console.log("This is a test");
+// });
 app.use("/user", userRoutes);
 app.use("/weather", weatherRoutes);
 app.use("/journal", journalRoutes);
