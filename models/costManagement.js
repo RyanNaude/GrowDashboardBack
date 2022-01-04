@@ -27,8 +27,10 @@ const costManagementSchema = new Schema({
     type: Number,
     required: [true, "Electricity rate is required"],
   },
-
-  // Add Journal ID. Link devices to a certain journal / grow area
+  journalId: {
+    type: Number,
+    required: [true, "Journal ID is required"],
+  },
 });
 
 module.exports = mongoose.model("costManagement", costManagementSchema);

@@ -3,7 +3,7 @@
 const costManagement = require("../models/costManagement");
 
 exports.addDevice = async (req, res, next) => {
-  console.log( req.body);
+  console.log(req.body);
   const newCostManagement = new costManagement({
     devName: req.body.deviceName,
     devAmps: req.body.deviceAmps,
@@ -11,6 +11,7 @@ exports.addDevice = async (req, res, next) => {
     devWatt: req.body.deviceWatts,
     devHrs: req.body.deviceHours,
     devRate: req.body.deviceRate,
+    journalId: req.body.journalId,
   });
 
   newCostManagement.save((err) => {
@@ -22,4 +23,18 @@ exports.addDevice = async (req, res, next) => {
       res.status(401).json({ deviceCreate: "Failure" });
     }
   });
+};
+
+exports.getDevice = async (req, res, next) => {
+  costManagement.find(function (err, devices) {
+    if (err) {
+      console.log(err);
+      res.status(401).json({ devices: "none" });
+    } else {
+      console.log(devices);
+      res.send(devices);
+    }
+  });
+
+  console.log("Get Devices on the database");
 };

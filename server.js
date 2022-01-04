@@ -14,6 +14,7 @@ const https = require("https");
 const userRoutes = require("./routes/user-routes");
 const weatherRoutes = require("./routes/weather-routes");
 const journalRoutes = require("./routes/journal-routes");
+const calanderRoutes = require("./routes/calander-routes copy");
 const costmanagementRoutes = require("./routes/costManagement-routes");
 
 //Import Models
@@ -53,6 +54,7 @@ app.use("/costmanagement", costmanagementRoutes);
 app.use("/user", userRoutes);
 app.use("/weather", weatherRoutes);
 app.use("/journal", journalRoutes);
+app.use("/calander", calanderRoutes);
 
 //// Database connection
 mongoose.connect(configData.mongoose.connectionString).then((result) => {
